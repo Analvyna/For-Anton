@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+     <title>Playlist for Anton</title>
+     <style>
+         /* CSS styles for the entire page */
+         body {
+             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             background-color: #0E162B; /* Very dark deep blue, like deep night sky */
+             color: #E0E7FF; /* Lighter, soft blue-white text for general content */
+             margin: 0;
+             padding: 20px;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             min-height: 100vh; /* Minimum height to fill the viewport */
+             justify-content: flex-start; /* Content starts from the top */
+         }
+
+         /* Styles for the main container (top section with image) */
+         .container {
+             background-color: #1A2E4E; /* Darker blue for main panels */
+             padding: 40px 20px; /* Padding around content inside the container */
+             border-radius: 20px; /* Rounded corners */
+             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* Stronger shadow effect */
+             width: 100%;
+             max-width: 700px; /* Maximum width of the container */
+             margin-bottom: 30px; /* Bottom margin for the container */
+             box-sizing: border-box; /* Box-sizing model */
+             text-align: center; /* Center-align text */
+             position: relative; /* Required for absolute positioning of elements inside */
+             height: 450px; /* Explicit height to make the background image visible */
+             border-top: 2px solid rgba(255, 255, 255, 0.1); /* Subtle top border for definition */
+         }
+
+         /* Wrapper for the background image and overlay inside the container */
+         .image-background-wrapper {
+             position: absolute;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             border-radius: 20px; /* Same rounded corners as the container */
+             overflow: hidden; /* Important to ensure image stays within bounds */
+         }
+
+         /* Styles for the image inside the wrapper */
+         .image-background-wrapper img {
+             width: 100%;
+             height: 100%;
+             object-fit: cover; /* Ensure image covers the area without distortion */
+             position: absolute;
+             top: 0;
+             left: 0;
+         }
+
+         /* Dark overlay on top of the image */
+         .image-background-wrapper::before {
+             content: '';
+             position: absolute;
+             top: 0;
+             left: 0;
+             right: 0;
+             bottom: 0;
+             background-color: rgba(0, 0, 0, 0.55); /* Slightly darker transparent black color */
+             z-index: 1; /* Ensure overlay is above the image */
+         }
+
+         /* Content placed on top of the overlay and image */
+         .content-overlay {
+             position: relative;
+             z-index: 2; /* Ensure content is above the overlay and image */
+             display: flex; /* Use flexbox for vertical layout */
+             flex-direction: column;
+             align-items: center; /* Center content horizontally */
+             justify-content: center; /* Center content vertically */
+             height: 100%; /* Ensure content fills the wrapper height */
+         }
+
+         /* Styles for the main title */
+         h1 {
+             color: #FFFFFF; /* Keep titles bright white */
+             text-shadow: 2px 2px 7px rgba(0, 0, 0, 0.7); /* Stronger text shadow effect */
+             margin-bottom: 20px;
+             font-size: 2.8em; /* Large font size */
+             position: relative;
+             z-index: 3; /* Ensure it's above all overlays */
+         }
+
+         /* Styles for the track addition form */
+         .add-track-form {
+             display: flex;
+             flex-direction: column;
+             gap: 15px; /* Space between form elements */
+             margin-bottom: 30px;
+             width: 100%; /* Full width */
+             padding: 0 20px; /* Horizontal padding */
+             box-sizing: border-box;
+         }
+
+         /* Styles for text input in the form */
+         .add-track-form input::placeholder {
+             color: #A0B0CC; /* Lighter placeholder color */
+         }
+         .add-track-form input {
+             padding: 12px;
+             border-radius: 8px;
+             border: 1px solid #446688; /* Blue-ish border */
+             background-color: rgba(255, 255, 255, 0.08); /* Slightly transparent for depth */
+             color: #E0E7FF; /* Match body text color */
+             font-size: 1em;
+             width: 100%;
+             box-sizing: border-box;
+             /* Subtle glossy effect for input */
+             background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+         }
+
+         /* Styles for the "Add to Playlist" button */
+         .add-track-form button {
+             background-color: #3C638E; /* Medium-dark blue */
+             color: #ffffff;
+             padding: 12px 25px;
+             border: none;
+             border-radius: 8px;
+             cursor: pointer;
+             font-size: 1.1em;
+             font-weight: bold;
+             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+             /* Enhanced glossy effect */
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%);
+             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6); /* Stronger shadow for depth */
+             width: 100%;
+         }
+
+         /* Hover effect for the "Add to Playlist" button */
+         .add-track-form button:hover {
+             background-color: #4A70A0; /* Slightly lighter on hover */
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
+             transform: translateY(-2px);
+             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
+         }
+
+         /* Styles for the playlist section */
+         .playlist-section {
+             background-color: #1A2E4E; /* Same background color as the main container */
+             border-radius: 16px;
+             padding: 20px;
+             width: calc(100% - 40px); /* Adjusted width with padding */
+             max-width: 700px;
+             margin-top: 20px;
+             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+             text-align: center;
+             border-top: 2px solid rgba(255, 255, 255, 0.1); /* Subtle top border for definition */
+         }
+
+         /* Styles for the playlist section title */
+         .playlist-section h2 {
+             font-size: 2.2em;
+             margin-bottom: 20px;
+             color: #FFFFFF; /* Keep titles bright white */
+             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+             font-weight: bold;
+         }
+
+         /* Styles for the unordered list */
+         .playlist {
+             list-style: none; /* Remove bullet points */
+             padding: 0;
+             width: 100%;
+             text-align: center; /* Center text for empty message */
+         }
+
+         /* Styles for each item in the playlist */
+         .playlist-item {
+             background-color: #25426B; /* A distinct dark blue for list items */
+             border: 1px solid rgba(255, 255, 255, 0.2); /* More visible border */
+             padding: 15px 20px;
+             margin-bottom: 15px;
+             border-radius: 10px;
+             /* Flexbox for the content and iframe */
+             display: flex;
+             flex-direction: column; /* Stack content vertically */
+             align-items: flex-start; /* Align content to the left */
+             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+             color: #E0E7FF; /* Match body text color */
+             /* Enhanced glossy effect */
+             background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+         }
+
+         /* Styles for text inside playlist item (e.g., date, if it were there) */
+         .playlist-item small {
+             margin-top: 5px;
+             margin-bottom: 10px; /* Space between date and iframe */
+             display: block;
+             text-align: left;
+         }
+
+         /* Styles for the iframe container */
+         .spotify-embed-container {
+             width: 100%;
+             margin-bottom: 15px; /* Space between iframe and remove button */
+         }
+
+         /* Styles for the "Remove" button */
+         .playlist-item .remove-btn {
+             background-color: #E63946; /* A clear, slightly more vibrant red */
+             color: white;
+             border: none;
+             border-radius: 5px;
+             padding: 8px 12px;
+             cursor: pointer;
+             font-size: 0.9em;
+             transition: background-color 0.3s ease;
+             align-self: flex-end; /* Align button to the right */
+         }
+
+         /* Hover effect for the "Remove" button */
+         .playlist-item .remove-btn:hover {
+             background-color: #C92A38;
+         }
+
+         /* Container for the "Back" button */
+         .back-button-container {
+             margin-top: 30px;
+             text-align: center;
+             width: 100%;
+         }
+
+         /* Styles for the "Back" button */
+         .back-button-container a {
+             background-color: #3C638E; /* Medium-dark blue */
+             color: white;
+             padding: 12px 25px;
+             border: none;
+             border-radius: 8px;
+             text-decoration: none;
+             font-weight: bold;
+             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+             /* Enhanced glossy effect */
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%);
+             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+             display: inline-block; /* Allow padding etc. to be set */
+             min-width: 200px; /* Minimum width */
+         }
+
+         /* Hover effect for the "Back" button */
+         .back-button-container a:hover {
+             background-color: #4A70A0; /* Slightly lighter on hover */
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
+             transform: translateY(-2px);
+             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
+         }
+
+         /* Styles for the "Open Playlist on Spotify" button */
+         .spotify-button {
+             display: inline-block;
+             background-color: #3C638E; /* Medium-dark blue */
+             color: white;
+             padding: 12px 25px;
+             margin-top: 20px;
+             border-radius: 8px;
+             text-decoration: none;
+             font-weight: bold;
+             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+             box-sizing: border-box;
+             /* Enhanced glossy effect */
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%);
+             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+             font-size: 1.1em;
+             border: none;
+         }
+
+         /* Hover effect for the Spotify button */
+         .spotify-button:hover {
+             background-color: #4A70A0;
+             background-image: linear-gradient(to top, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
+             transform: translateY(-2px);
+             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.7);
+         }
+
+         /* Responsive design for mobile devices */
+         @media (max-width: 768px) {
+             body {
+                 padding: 15px;
+             }
+             .container {
+                 padding: 30px 15px;
+                 height: auto; /* Let height adjust to content */
+             }
+             .image-background-wrapper {
+                 position: absolute;
+                 top: 0;
+                 left: 0;
+                 right: 0;
+                 bottom: 0;
+                 border-radius: 20px;
+             }
+             .content-overlay {
+                  padding: 20px 0; /* Vertical padding for content in overlay */
+             }
+             h1 {
+                 font-size: 2.2em;
+             }
+             .playlist-section h2 {
+                 font-size: 1.8em;
+             }
+             .add-track-form input,
+             .add-track-form button,
+             .spotify-button,
+             .back-button-container a {
+                 font-size: 0.95em;
+                 padding: 10px;
+             }
+             .playlist-item {
+                 flex-direction: column;
+                 align-items: flex-start;
+                 padding: 12px 15px;
+             }
+             .playlist-item small { /* Re-add small styling if needed for other hidden text */
+                 margin-top: 5px;
+                 margin-bottom: 10px;
+                 display: block;
+                 text-align: left;
+             }
+             .playlist-item .remove-btn {
+                 width: 100%;
+                 text-align: center;
+                 align-self: center; /* Center button on mobile */
+             }
+         }
+     </style>
+ </head>
+ <body>
+
+     <div class="container" style="height: 450px;">
+         <div class="image-background-wrapper">
+             <img src="kiyowo.jpg" alt="Background Image">
+         </div>
+         <div class="content-overlay">
+             <h1>Playlist for Anton</h1>
+             <div class="add-track-form">
+                 <input type="text" id="spotifyUrl" placeholder="paste spotify url here" required>
+                 <button onclick="addTrack()">Add to Playlist</button>
+             </div>
+         </div>
+     </div>
+
+     <div class="playlist-section">
+         <h2>Added Tracks</h2>
+         <ul id="playlist" class="playlist">
+             <li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>
+         </ul>
+
+         <div class="spotify-link-container" style="text-align: center; margin-top: 30px;">
+             <a href="https://open.spotify.com/playlist/YOUR_SPOTIFY_PLAYLIST_ID_HERE" target="_blank" class="spotify-button">Open Playlist on Spotify</a>
+         </div>
+     </div>
+
+     <div class="back-button-container">
+         <a href="index.html">Back</a>
+     </div>
+
+     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+     <script>
+         // --- YOUR FIREBASE CONFIGURATION (REPLACE WITH ACTUAL VALUES FROM FIREBASE CONSOLE) ---
+         const firebaseConfig = {
+             apiKey: "AIzaSyC2dE4fG6hI8jK0lM2nO4pQ6rS8tU0vX2y4z6-XXXXXX", // <--- INI HARUS DIGANTI DENGAN API KEY ASLI ANDA!
+             authDomain: "anton-web-message-95d43.firebaseapp.com",
+             projectId: "anton-web-message-95d43",
+             storageBucket: "anton-web-message-95d43.appspot.com",
+             messagingSenderId: "1064249058778",
+             appId: "1:1064249058778:web:b1d5c22501a30ef1d5c31f"
+         };
+
+         // Initialize Firebase
+         firebase.initializeApp(firebaseConfig);
+         const db = firebase.firestore(); // Get a reference to the Firestore database
+         // --- END OF FIREBASE CONFIGURATION ---
+
+         // Regex untuk mengekstrak ID dan Tipe dari URL Spotify
+         // Grup 2: 'track', 'album', 'playlist', 'artist' dari open.spotify.com
+         // Grup 3: ID Spotify dari open.spotify.com
+         // Grup 5: 'track', 'album', 'playlist', 'artist' dari spotify:uri
+         // Grup 6: ID Spotify dari spotify:uri
+         const spotifyUrlRegex = /^(?:https?:\/\/(?:open\.spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)(?:\?.*)?|spotify:((track|album|playlist|artist):)?([a-zA-Z0-9]+)))$/;
+
+
+         // Function to add a Spotify URL to Firestore
+         async function addTrack() {
+             const spotifyUrlInput = document.getElementById('spotifyUrl');
+             const url = spotifyUrlInput.value.trim();
+
+             if (url === '') {
+                 alert('Spotify URL tidak boleh kosong!');
+                 return;
+             }
+
+             const match = url.match(spotifyUrlRegex);
+
+             if (!match) {
+                 alert('Mohon masukkan URL Spotify yang valid (contoh: dari https://open.spotify.com/... atau spotify:uri).');
+                 return;
+             }
+
+             // Extract type and ID based on which group matched (for spotify:uri or https://open.spotify.com)
+             let type = match[1] || match[4]; // 'track', 'album', 'playlist', 'artist'
+             let id = match[2] || match[5]; // The actual Spotify ID
+
+             // Handle artist type (Spotify embed doesn't directly play artist, but we can store it)
+             if (type === 'artist') {
+                 alert('Menambahkan URL artis. Perlu dicatat bahwa pemutar tertanam Spotify tidak langsung memutar profil artis. Anda perlu menautkan ke lagu/album/playlist tertentu.');
+             }
+
+             try {
+                 await db.collection('playlist_urls').add({
+                     spotifyUrl: url, // Simpan URL asli
+                     spotifyType: type, // Simpan tipe (track, album, playlist, artist)
+                     spotifyId: id, // Simpan ID Spotify
+                     addedAt: firebase.firestore.FieldValue.serverTimestamp()
+                 });
+                 spotifyUrlInput.value = '';
+                 alert('URL Spotify berhasil ditambahkan!');
+                 console.log('Spotify URL added successfully!');
+             } catch (error) {
+                 console.error("Error adding URL:", error);
+                 alert(`Gagal menambahkan URL: ${error.message}. Periksa konsol browser untuk detail.`);
+             }
+         }
+
+         // Function to display playlist tracks from Firestore in real-time
+         async function fetchPlaylist() {
+             const playlistElement = document.getElementById('playlist');
+             db.collection('playlist_urls').orderBy('addedAt', 'desc').onSnapshot((snapshot) => {
+                 playlistElement.innerHTML = '';
+
+                 if (snapshot.empty) {
+                     playlistElement.innerHTML = '<li style="text-align: center; color: #ccc;">Belum ada lagu di playlist. Tambahkan satu!</li>';
+                     return;
+                 }
+
+                 snapshot.forEach(doc => {
+                     const track = doc.data();
+                     const listItem = document.createElement('li');
+                     listItem.className = 'playlist-item';
+                     listItem.setAttribute('data-id', doc.id);
+
+                     // Menghapus penggunaan displayDate dan logika terkait tanggal
+                     // Karena Anda ingin menghapus tampilan tanggal
+
+                     let embedHtml = '';
+                     let displayUrlText = track.spotifyUrl;
+
+                     // Periksa apakah ada spotifyId dan spotifyType yang tersimpan
+                     if (track.spotifyId && (track.spotifyType === 'track' || track.spotifyType === 'album' || track.spotifyType === 'playlist')) {
+                         const embedUrl = `https://open.spotify.com/embed/${track.spotifyType}/${track.spotifyId}`;
+                         // Tinggi iframe disesuaikan: 80 untuk track, 352 untuk album/playlist compact
+                         const iframeHeight = (track.spotifyType === 'track') ? 80 : 352;
+                         embedHtml = `
+                             <div class="spotify-embed-container">
+                                 <iframe style="border-radius:12px" src="${embedUrl}"
+                                     width="100%" height="${iframeHeight}" frameBorder="0" allowfullscreen=""
+                                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                     loading="lazy">
+                                 </iframe>
+                             </div>
+                         `;
+                     } else {
+                         // Jika tidak bisa di-embed (misal: artis, atau link tidak lengkap), tampilkan hanya link teks
+                         displayUrlText = track.spotifyUrl.length > 50 ? track.spotifyUrl.substring(0, 47) + '...' : track.spotifyUrl;
+                         embedHtml = `<span><strong>URL:</strong> <a href="${track.spotifyUrl}" target="_blank" style="color: #9EC0FF; text-decoration: underline;">${displayUrlText}</a></span>`;
+                     }
+
+                     listItem.innerHTML = `
+                         ${embedHtml}
+                         <button class="remove-btn" onclick="removeTrack('${doc.id}')">Hapus</button>
+                     `;
+                     playlistElement.appendChild(listItem);
+                 });
+             }, (error) => {
+                 console.error("Error fetching playlist:", error);
+                 alert('Gagal memuat playlist. Periksa koneksi internet Anda atau konsol browser.');
+                 playlistElement.innerHTML = '<li style="color: red; text-align: center;">Gagal memuat playlist. Mohon periksa konsol browser untuk detail error.</li>';
+             });
+         }
+
+         // Function to remove a URL from Firestore
+         async function removeTrack(id) {
+             if (!confirm('Apakah Anda yakin ingin menghapus URL ini dari playlist?')) {
+                 return;
+             }
+             try {
+                 await db.collection('playlist_urls').doc(id).delete();
+                 alert('URL berhasil dihapus!');
+                 console.log('URL removed successfully!');
+             } catch (error) {
+                 console.error("Error removing URL:", error);
+                 alert(`Gagal menghapus URL: ${error.message}. Periksa konsol browser untuk detail.`);
+             }
+         }
+
+         // Load playlist when the page is first loaded
+         document.addEventListener("DOMContentLoaded", fetchPlaylist);
+     </script>
+ </body>
+ </html>
